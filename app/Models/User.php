@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -13,18 +13,21 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
-     * Los atributos que son asignables en masa.
+     * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
+        'nombre',
+        'correo',
+        'nombreUsuario',
+        'edad',
+        'país',
         'password',
     ];
 
     /**
-     * Los atributos que deben estar ocultos para la serialización.
+     * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
      */
@@ -34,17 +37,27 @@ class User extends Authenticatable
     ];
 
     /**
-     * Los atributos que deben ser casteados.
+     * The attributes that should be cast.
      *
      * @var array<string, string>
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
     ];
 
-    public function posts()
+    /**
+     * Get the books associated with the user's personal library.
+     */
+    public function books()
     {
-        return $this->hasMany(Post::class);
+        return $this->belongsToMany(Book::class, 'personal_libraries', 'user_id', 'book_id');
+    }
+
+    /**
+     * Get the reviews for the user.
+     */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'id_usuario');
     }
 }
