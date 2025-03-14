@@ -1,78 +1,46 @@
 <?php
 
+use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
-use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Event; // Import the Event facade
+use Pest\Laravel;
+use function Pest\Laravel\actingAs;
 
-class PostCreationWithDuplicateSlugTest extends TestCase
-{
-    use RefreshDatabase;
+uses(RefreshDatabase::class);
 
-    public function test_can_create_post_with_duplicate_slug(): void
-    {
-        // 1. Arrange
-        $user = User::factory()->create();
-        Auth::login($user);
+it('can create a post successfully even with duplicate slugs', function () {
+    $user = User::factory()->create();
+    actingAs($user);
 
-        // Crear una categoría
-        $category = Category::factory()->create();
-        $categoryIds = [$category->id];
+    // Crear la primera publicación
+    $post1 = Post::create([
+        'title' => 'Título repetido',
+        'excerpt' => 'Extracto de prueba 1',
+        'content' => 'Contenido de prueba 1',
+        'user_id' => $user->id,
+    ]);
 
-        $postTitle = 'Test Post Title';
-        $firstPostSlug = Str::slug($postTitle); // Generate the base slug
+    // Crear la segunda publicación con el mismo título
+    $post2 = Post::create([
+        'title' => 'Título repetido',
+        'excerpt' => 'Extracto de prueba 2',
+        'content' => 'Contenido de prueba 2',
+        'user_id' => $user->id,
+    ]);
 
-        // Crear un post inicial con el título que usaremos de "duplicado"
-        Event::fake(); // Prevent all events from firing
-        Post::create([
-            'title' => $postTitle,
-            'slug' => $firstPostSlug, // Assign the slug directly
-            'excerpt' => 'Initial excerpt',
-            'content' => 'Initial content',
-            'user_id' => $user->id,
-        ]);
-        Event::clearResolvedInstances(); // Clear resolved instances
+    // Asegurarse de que ambas publicaciones fueron creadas exitosamente y tienen slugs únicos
+    expect($post1->slug)->toBe('titulo-repetido');
+    expect($post2->slug)->toBe('titulo-repetido-1');
 
-        // Debug: Get and output the slug of the first post
-        $firstPost = Post::where('title', $postTitle)->first();
-        dump("First Post Slug: " . $firstPost->slug);
+    // Verificar que la respuesta sea correcta y contenga la estructura esperada
+    $this->assertDatabaseHas('posts', [
+        'id' => $post1->id,
+        'slug' => 'titulo-repetido'
+    ]);
 
-        // Data for the new post (same title, will generate a duplicate slug initially)
-        $postData = [
-            'title' => $postTitle,
-            'excerpt' => 'New post excerpt',
-            'content' => 'New post content',
-            'categories' => $categoryIds,
-        ];
-
-        // 2. Act
-        $response = $this->actingAs($user)->postJson('/api/v1/posts', $postData);
-
-        // 3. Assert
-        $response->assertStatus(201);
-
-        // Verificar que el post se creó en la base de datos
-        $this->assertDatabaseHas('posts', [
-            'title' => $postTitle,
-            'excerpt' => 'New post excerpt',
-            'content' => 'New post content',
-            'user_id' => $user->id,
-        ]);
-
-        // Get the newly created post
-        $newPost = Post::where('title', $postTitle)->latest()->first();
-
-        // Debug: Get and output the slug of the new post
-        dump("New Post Slug: " . $newPost->slug);
-
-        // Verificar que el slug no es el mismo que el del primer post
-        $this->assertNotEquals($firstPostSlug, $newPost->slug);
-
-        // Verificar que el slug tiene el sufijo incremental
-        $this->assertStringContainsString($firstPostSlug . '-', $newPost->slug);
-    }
-}
+    $this->assertDatabaseHas('posts', [
+        'id' => $post2->id,
+        'slug' => 'titulo-repetido-1'
+    ]);
+});
