@@ -7,6 +7,7 @@ use App\Http\Requests\StorePostRequest;
 use App\Models\Post;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Http\Resources\PostResource;
 
 class PostController extends Controller
 {
@@ -33,7 +34,7 @@ class PostController extends Controller
         $post->load('categories', 'user');
 
         // Retorna el post creado con un código de estado 201 (Created)
-        return response()->json($post, 201);
+        return response()->json(new PostResource($post), 201);
     }
 
     /**

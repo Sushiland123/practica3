@@ -33,7 +33,8 @@ it('can create a post successfully via API even with duplicate slugs', function 
                      'excerpt',
                      'content',
                      'slug',
-                     'user_id',
+                     'user',
+                     'categories',
              ]);
 
     $post1 = Post::find($response1->json('id'));
@@ -55,7 +56,17 @@ it('can create a post successfully via API even with duplicate slugs', function 
                      'excerpt', 
                      'content', 
                      'slug',
-                     'user_id',
+                     'user' => [
+                         'id',
+                         'name',
+                         'mail'
+                     ],
+                     'categories' => [
+                         '*' => [
+                             'id',
+                             'name',
+                         ]
+                     ],
                  
              ]);
 

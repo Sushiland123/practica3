@@ -38,7 +38,8 @@ class PostCreationTest extends TestCase
             'title',
             'excerpt',
             'content',
-            'user_id',
+            'user',
+            'categories',
             'created_at',
             'updated_at',
         ]);
