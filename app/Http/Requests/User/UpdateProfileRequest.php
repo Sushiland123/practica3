@@ -20,10 +20,10 @@ class UpdateProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nombre' => 'string|max:255',
-            'nombreUsuario' => 'string|max:255|unique:users,nombreUsuario,' . auth()->id(),
-            'edad' => 'integer|min:18',
-            'país' => 'string|max:255',
+            'name' => 'string|max:255',
+            'username' => 'string|max:255|unique:users,nombreUsuario,' . auth()->id(),
+            'age' => 'integer|min:18',
+            'country' => 'string|max:255',
         ];
     }
 }
