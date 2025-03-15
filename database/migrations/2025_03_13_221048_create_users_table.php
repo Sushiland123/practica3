@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id(); // Crea una columna 'id' como clave primaria autoincremental
-            $table->string('nombre');
-            $table->string('correo')->unique();
-            $table->string('nombreUsuario')->unique();
-            $table->integer('edad');
-            $table->string('país');
+            $table->string('name');
+            $table->string('mail')->unique();
+            $table->string('username')->unique();
+            $table->integer('age');
+            $table->string('country');
             $table->string('password');
             $table->rememberToken();
             $table->timestamps(); // Crea las columnas 'created_at' y 'updated_at'

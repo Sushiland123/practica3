@@ -18,11 +18,11 @@ class DatabaseSeeder extends Seeder
     {
         // Crear usuarios
         DB::table('users')->insert([
-            'nombre' => 'John Doe',
-            'correo' => 'john.doe@example.org',
-            'nombreUsuario' => 'johndoe',
-            'edad' => 30,
-            'país' => 'EE.UU.',
+            'name' => 'John Doe',
+            'mail' => 'john.doe@example.org',
+            'username' => 'johndoe',
+            'age' => 30,
+            'country' => 'EE.UU.',
             'password' => Hash::make('password'), // contraseña
             'remember_token' => Str::random(10),
         ]);

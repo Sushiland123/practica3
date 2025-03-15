@@ -14,11 +14,11 @@ namespace App\Http\Controllers;
         public function register(RegisterRequest $request)
         {
             $user = User::create([
-                'nombre' => $request->nombre,
-                'correo' => $request->correo,
-                'nombreUsuario' => $request->nombreUsuario,
-                'edad' => $request->edad,
-                'país' => $request->país,
+                'name' => $request->name,
+                'mail' => $request->mail,
+                'username' => $request->username,
+                'age' => $request->age,
+                'country' => $request->country,
                 'password' => Hash::make($request->password),
             ]);
 
@@ -29,11 +29,11 @@ namespace App\Http\Controllers;
 
         public function login(LoginRequest $request)
         {
-            if (!Auth::attempt($request->only('correo', 'password'))) {
+            if (!Auth::attempt($request->only('mail', 'password'))) {
                 return response()->json(['message' => 'Credenciales inválidas'], 401);
             }
 
-            $user = User::where('correo', $request->correo)->firstOrFail();
+            $user = User::where('mail', $request->mail)->firstOrFail();
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json(['token' => $token], 200);
