@@ -33,7 +33,15 @@ class PostCreationTest extends TestCase
 
         // 3. Assert
         $response->assertStatus(201);
-
+        $response->assertJsonStructure([
+            'id',
+            'title',
+            'excerpt',
+            'content',
+            'user_id',
+            'created_at',
+            'updated_at',
+        ]);
         $this->assertDatabaseHas('posts', [
             'title' => 'Test Post Title',
             'excerpt' => 'Test post excerpt',

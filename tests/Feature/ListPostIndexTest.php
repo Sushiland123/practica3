@@ -23,4 +23,16 @@ it('can list all posts of a user with filter', function () {
 
     // Assert that the response contains only the filtered posts
     $response->assertJsonCount(5);
+
+    $response->assertJsonstructure([
+         [
+            'id',
+            'title',
+            'excerpt',
+            'content',
+            'user_id',
+            'created_at',
+            'updated_at',
+        ],
+    ]);
 });

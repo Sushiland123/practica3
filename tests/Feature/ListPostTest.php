@@ -22,4 +22,15 @@ it('can list all posts of a user without filter', function () {
 
     // Assert that the response contains the posts
     $response->assertJsonCount(10);
+    $response->assertJsonstructure([
+        [
+            'id',
+            'title',
+            'excerpt',
+            'content',
+            'user_id',
+            'created_at',
+            'updated_at',
+        ],
+    ]);
 });
